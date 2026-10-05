@@ -97,6 +97,11 @@ display_info(){
 	echo
 }
 
+check_process(){
+	echo "${TEXT_ULINE}Información sobre los procesos que más memoria consumen:${TEXT_RESET}"
+	ps -eo pid,comm,%mem,rss --sort=-%mem | head -n 8
+	echo
+}
 
 cat << _EOF_
 
@@ -113,5 +118,6 @@ environment_info
 check_security
 check_hostname
 display_info
+check_process
 
 exit 0
