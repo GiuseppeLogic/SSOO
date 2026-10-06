@@ -1,0 +1,63 @@
+
+=== [1mInformación del sistema Ubuntu-18-CyA-Giuseppe[0m ===
+
+[4mVersión del sistema:[0m
+Linux Ubuntu-18-CyA-Giuseppe 6.8.0-142-generic #142-Ubuntu SMP PREEMPT_DYNAMIC Wed Sep  2 14:24:27 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux
+[4mTiempo de encendido del sistema:[0m
+ 20:59:46 up 11 days, 14:38,  4 users,  load average: 0,00, 0,00, 0,00
+[4mEspacio ocupado por el sistema:[0m
+Filesystem                        1K-blocks     Used Available Use% Mounted on
+tmpfs                                812756     1064    811692   1% /run
+/dev/mapper/ubuntu--vg-ubuntu--lv  84957824 11573164  69735572  15% /
+tmpfs                               4063772        0   4063772   0% /dev/shm
+tmpfs                                  5120        0      5120   0% /run/lock
+/dev/sda2                           1992552   204656   1666656  11% /boot
+tmpfs                                812752       12    812740   1% /run/user/1000
+USADO	DIRECTORIO
+6,7G	usuario
+[4mVaribles de entorno:[0m
+[1mPATH = [0m/home/usuario/.vscode-server/cli/servers/Stable-07f806f999227108933c2e30515b26eecc1fda74/server/bin/remote-cli:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/usuario/PrácticasCyA:/home/usuario:/home/usuario/PrácticasCyA:/home/usuario/PrácticasCyA
+
+[1mSHELL = [0m/bin/bash
+[4mComprobación de seguridad ('/etc/shadow'):[0m
+[32m NO CORRE NINGUN PELIGRO.[0m
+[4mComprobación del Hostname:[0m
+El Hostname Ubuntu-18-CyA-Giuseppe contiene carácteres alfanuméricos.
+[4mInformación sobre el entorno gráfico:[0m
+[31m NO HAY ENTORNO GRÁFICO[0m
+[4mInformación sobre los procesos que más memoria consumen:[0m
+    PID COMMAND         %MEM   RSS
+  65912 MainThread       2.3 187692
+  65571 MainThread       2.0 168760
+  65617 MainThread       0.9 79876
+  65924 MainThread       0.7 59856
+  68667 fwupd            0.5 46108
+    461 multipathd       0.3 27460
+  20966 systemd-journal  0.3 27308
+[4mInformación sobre los procesos del usuario usuario:[0m
+El usuario tiene más de 10 comandos en ejecución:
+  66057 pts/3    00:00:00 bash
+  68228 pts/0    00:00:00 bash
+  69228 pts/0    00:00:00 bash
+  69290 pts/0    00:00:00 bash
+  69307 pts/0    00:00:00 bash
+  65861 ?        00:00:10 code-07f806f999
+  60549 ?        00:00:00 code-1b6a188127
+   5505 ?        00:00:25 code-7debcd0e2a
+  24222 ?        00:00:00 dbus-daemon
+  65571 ?        00:00:18 MainThread
+  65617 ?        00:00:22 MainThread
+  65912 ?        00:00:28 MainThread
+  65924 ?        00:00:03 MainThread
+  69311 pts/0    00:00:00 ps
+   5343 ?        00:00:00 (sd-pam)
+  65561 ?        00:00:00 sh
+  65843 ?        00:00:00 sh
+  69059 ?        00:00:00 sleep
+  69312 pts/0    00:00:00 sort
+  65842 ?        00:00:04 sshd
+   5342 ?        00:00:01 systemd
+Cantidad total de comandos en ejecución: 22.
+
+[32mActualizado el 06/10/26 20:59 UTC por usuario.[0m
+
