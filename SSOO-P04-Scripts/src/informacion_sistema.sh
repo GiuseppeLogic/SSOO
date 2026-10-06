@@ -103,6 +103,19 @@ check_process(){
 	echo
 }
 
+process_user(){
+	num_process=$(ps -u $USER --no-header | wc -l)
+	echo "${TEXT_ULINE}Información sobre los procesos del usuario $USER:${TEXT_RESET}"
+	if [[ $num_process -gt 10 ]]; then
+		echo "El usuario tiene más de 10 comandos en ejecución:"
+		ps -u $USER  --no-header | sort -k 4
+		echo "Cantidad total de comandos en ejecución: $num_process."
+	else
+		echo "El número de procesos de $USER es: $num_process"
+	fi
+
+}
+
 cat << _EOF_
 
 === $TEXT_BOLD$TITLE $HOSTNAME$TEXT_RESET ===
@@ -119,5 +132,6 @@ check_security
 check_hostname
 display_info
 check_process
+process_user
 
 exit 0
