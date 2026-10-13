@@ -13,6 +13,7 @@ filename="../docs/sysinfo.txt"
 interactive=0
 mostrar_pantalla="S"
 sobreescribir="S"
+seconds="00:00:00"
 
 #### Estilos:
 
@@ -54,6 +55,8 @@ $(check_process)
 
 $(process_user)
 
+$(lsprocess)
+
 $TEXT_GREEN$TIME_STAMP$TEXT_RESET
 
 _EOF_
@@ -80,6 +83,11 @@ show_uptime(){
 drive_space(){
 	echo "${TEXT_ULINE}Espacio ocupado por el sistema:${TEXT_RESET}"
 	df
+}
+
+lsprocess(){
+	echo "${TEXT_ULINE}Mostramos todos los procesos del sistema que lleven más de $seconds segundos:${TEXT_RESET}"
+	ps -eo user,pid,stat,etime,comm --no-headers | awk -v limite="$seconds" '$1 != "root" && $3 ~ /^R/ && $4 >= limite {print}'
 }
 
 home_space(){
@@ -163,6 +171,10 @@ while [[ "$1" != "" ]];do
 		-h | --help )
 			usage
 			exit
+			;;
+		-p )
+			shift
+			seconds=$1
 			;;
 		* ) 
 			usage
