@@ -5,12 +5,12 @@
 Linux Ubuntu-18-CyA-Giuseppe 6.8.0-146-generic #146-Ubuntu SMP PREEMPT_DYNAMIC Thu Sep  3 16:12:30 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux
 
 [4mTiempo de encendido del sistema:[0m
- 09:51:48 up 4 days,  3:16,  2 users,  load average: 0,00, 0,00, 0,00
+ 09:57:23 up 4 days,  3:21,  2 users,  load average: 0,00, 0,00, 0,00
 
 [4mEspacio ocupado por el sistema:[0m
 Filesystem                        1K-blocks     Used Available Use% Mounted on
 tmpfs                                812756     1036    811720   1% /run
-/dev/mapper/ubuntu--vg-ubuntu--lv  84957824 11278016  70030720  14% /
+/dev/mapper/ubuntu--vg-ubuntu--lv  84957824 11278088  70030648  14% /
 tmpfs                               4063768        0   4063768   0% /dev/shm
 tmpfs                                  5120        0      5120   0% /run/lock
 /dev/sda2                           1992552   204700   1666612  11% /boot
@@ -35,10 +35,10 @@ El Hostname Ubuntu-18-CyA-Giuseppe contiene carácteres alfanuméricos.
 
 [4mInformación sobre los procesos que más memoria consumen:[0m
     PID COMMAND         %MEM   RSS
-  12089 MainThread       2.1 172004
-  12058 MainThread       1.6 136896
-  12100 MainThread       0.9 79488
-  12112 MainThread       0.7 59036
+  12089 MainThread       2.1 174868
+  12058 MainThread       1.9 161356
+  12100 MainThread       1.0 82352
+  12112 MainThread       0.7 59048
    1103 fwupd            0.5 47368
     466 multipathd       0.3 27460
     841 unattended-upgr  0.3 25024
@@ -56,29 +56,31 @@ El usuario tiene más de 10 comandos en ejecución:
   14419 pts/8    00:00:00 bash
   14552 pts/9    00:00:00 bash
   14662 pts/10   00:00:00 bash
-  14767 pts/4    00:00:00 bash
-  14769 pts/4    00:00:00 bash
-  14783 pts/4    00:00:00 bash
+  14981 pts/11   00:00:00 bash
+  15115 pts/12   00:00:00 bash
+  15379 pts/13   00:00:00 bash
+  15431 pts/4    00:00:00 bash
+  15433 pts/4    00:00:00 bash
+  15447 pts/4    00:00:00 bash
    4946 ?        00:00:00 code-07f806f999
   11988 ?        00:00:04 code-07f806f999
-  12058 ?        00:00:07 MainThread
-  12089 ?        00:00:12 MainThread
-  12100 ?        00:00:09 MainThread
+  12058 ?        00:00:08 MainThread
+  12089 ?        00:00:14 MainThread
+  12100 ?        00:00:11 MainThread
   12112 ?        00:00:01 MainThread
   13034 pts/1    00:00:00 man
   13042 pts/1    00:00:00 pager
-  14787 pts/4    00:00:00 ps
+  15451 pts/4    00:00:00 ps
    4665 ?        00:00:00 (sd-pam)
   11970 ?        00:00:00 sh
   12054 ?        00:00:00 sh
-  14615 ?        00:00:00 sleep
-  14788 pts/4    00:00:00 sort
+  15293 ?        00:00:00 sleep
+  15452 pts/4    00:00:00 sort
   11967 ?        00:00:02 sshd
    4663 ?        00:00:00 systemd
-Cantidad total de comandos en ejecución: 31.
+Cantidad total de comandos en ejecución: 34.
 
-[4mMostramos todos los procesos del sistema que lleven más de -i segundos:[0m
-Tienes que ingresar una cantidad de segundos mayor que cero.
+[4mMostramos todos los procesos del sistema que lleven más de 00:00:00 segundos:[0m
 
-[32mActualizado el 13/10/26 09:51 UTC por usuario.[0m
+[32mActualizado el 13/10/26 09:57 UTC por usuario.[0m
 
