@@ -796,7 +796,7 @@ EJEMPLOS :
 EOF
 
 # -----------------------------------------------------------------------------
-# lsof
+# ps
 # -----------------------------------------------------------------------------
 RESUMEN[lsof]="Lista los archivos abiertos y los procesos que los usan."
 IFS= read -r -d '' 'FICHA[lsof]' <<'EOF'
