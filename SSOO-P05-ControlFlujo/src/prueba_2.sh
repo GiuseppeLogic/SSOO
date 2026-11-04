@@ -1,16 +1,17 @@
 #! /bin/bash
 
 # Constantes:
-FORMATO="%-10s %10s\n"
-USERS=$(cat /etc/passwd | awk -F ":" '{print $1}' | tr '\n'  ' ')
+FORMATO="%-20s %10s\n"
+USUARIOS=$(cat /etc/passwd | awk -F ':' '{print $1}' | tr '\n' ' ')
 SORT=0
-FILTRO=""
-FILTRO_INGRESADO=0
-FILTRO_VARIABLE=0
-LISTA_USERS=0
+EXPRESION_REGULAR=""
+USAR_VARIABLE_ENTORNO=0
+USAR_EXPRESION_REGULAR=0
+USAR_USUARIOS=0
+
 # Funciones:
 error_exit(){
-  echo "ERROR: $1" >&2
+  echo "ERROR: ${1:-Error Desconocido.}" >&2
   exit 1
 }
 
@@ -18,68 +19,79 @@ lsof_instalado(){
   type lsof > "/dev/null" 2> "/dev/null"
 }
 
-user_existe(){
-  id "$1" > /dev/null 2> /dev/null
+get_open_files(){
+  if [[ -n "$EXPRESION_REGULAR" ]];then
+    lsof -u "$1" 2> "/dev/null"  | awk -v reg="$EXPRESION_REGULAR" 'NR>1 && $NF ~ reg {suma += 1} END {print (suma) ? suma : 0}'
+  else
+    lsof -u "$1" 2> "/dev/null" | awk 'NR>1' | wc -l
+  fi
+
 }
 
-# Procesamiento de parámetros posicionales:
+usuario_existe(){
+  id "$1" > "/dev/null" 2> "/dev/null"
+}
+
+# Procesamiento de los parámetros posicionales:
 
 while [[ -n "$1" ]]
 do
   case "$1" in
-    -f )
-       shift
-       if [[ -z "$1" || "$1" == -* ]];then
-        error_exit "Tienes que ingresar una expresión regular."
-      fi
-      FILTRO_INGRESADO=1
-      FILTRO="$1"
-    ;;
     -r )
       SORT=1
     ;;
-    -e )
-      if [[ -z "$OPEN_FILES_REG" ]];then
-        error_exit "La variable de entorno no puede estar vacía."
-      fi
-      FILTRO_VARIABLE=1
-      FILTRO="$OPEN_FILES_REG"
-    ;;
-    -u )
+    -f )
       shift
       if [[ -z "$1" || "$1" == -* ]];then
-        error_exit "Tiene que ingresar como mínimo un usuario."
+        error_exit "Se tiene que ingresar una expresión regular válida."
       fi
-      LISTA_USERS=1
-      USERS=""
+      USAR_EXPRESION_REGULAR=1
+      EXPRESION_REGULAR="$1$"
+    ;;
+    -u ) 
+      shift 
+      if [[ -z "$1" || "$1" == -* ]];then
+        error_exit "Debes ingresar almenos un usuario."
+      fi
+      USUARIOS=""
+      USAR_USUARIOS=1
       while [[ -n "$1" && "$1" != -* ]]
       do
-        USERS="$USERS $1"
+        USUARIOS="$USUARIOS $1"
         shift
       done
       continue
     ;;
+    -e )
+      USAR_VARIABLE_ENTORNO=1
+    ;;
     * )
-      error_exit "Has ingresado un argumento inválido."
+      error_exit "Argumento no válido $1."
     ;;
   esac
   shift
 done
 
-# Comprobación del estado de ejecución:
+# Comprobación del estado de ejecución del programa:
 if ! lsof_instalado;then
-  error_exit "Se necesita tener instalado el programa lsof."
-fi 
-
-if [[ "$FILTRO_INGRESADO" == 1 && "$FILTRO_VARIABLE" == 1 ]];then
-  error_exit "La opción -e y -f son incompatibles."
+  error_exit "Se debe instalar el programa lsof."
 fi
 
-if [[ "$LISTA_USERS" != 0 ]];then
-  for user in $USERS
+if [[ "$USAR_VARIABLE_ENTORNO" -eq 1 && "$USAR_EXPRESION_REGULAR" -eq 1 ]];then
+  error_exit "No se pueden usar simultaneamente ambas opciones."
+fi
+
+if [[ "$USAR_VARIABLE_ENTORNO" -eq 1 &&  -z "$OPEN_FILES_REG" ]];then
+  error_exit "La variable de entorno OPEN_FILES_REG está vacía."
+elif [[ "$USAR_VARIABLE_ENTORNO" -eq 1 ]];then
+  EXPRESION_REGULAR="$OPEN_FILES_REG$"
+fi
+
+if [[ "$USAR_USUARIOS" -eq 1 ]];then
+  for usuario in $USUARIOS
   do
-    if ! user_existe "$user";then
-      error_exit "El usuario $user no existe."
+    if ! usuario_existe "$usuario";then
+      error_exit "No existe el usuario $usuario"
     fi
   done
 fi
@@ -87,18 +99,14 @@ fi
 # Lógica del programa:
 SORT_CMD="sort -k2,2nr"
 
-if [[ "$SORT" == 1 ]];then
+if [[ "$SORT" -eq 1 ]];then
   SORT_CMD="sort -k2,2n"
 fi
 
 printf "$FORMATO" USUARIO N_ARCHIVOS
-for user in $USERS
+for usuario in $USUARIOS
 do
-  if [[ $(lsof -u "$user" | wc -l) -gt 0 ]];then
-    if [[ -n "$FILTRO" ]];then
-      printf "$FORMATO" "$user" $(lsof -u "$user" 2> /dev/null | awk -v reg="$FILTRO" 'NR > 1 && $NF ~ reg "$" {suma++} END {print (suma != 0) ? suma : 0}')
-    else
-      printf "$FORMATO" "$user" $(lsof -u "$user" 2> /dev/null | awk 'NR>1' | wc -l)
-    fi
-  fi
-done |  $SORT_CMD
+  if [[ $(get_open_files "$usuario") -gt 0 ]];then
+    printf "$FORMATO" "$usuario" $(get_open_files "$usuario")
+  fi 
+done

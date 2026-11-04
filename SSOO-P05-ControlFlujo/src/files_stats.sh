@@ -25,65 +25,64 @@
 # ==============================================================================
 
 # Constantes:
+FORMATO="%-10s %10s\n"
+INGRESA_DIRECTORIO=0
 DIRECTORIO="/tmp"
-FORMATO="%-12s %10s" 
 
 # Funciones:
-
-error_system(){
-  echo "ERROR: $1"
+error_exit(){
+  echo "ERROR: ${1:-Error Desconocido.}" >&2
   exit 1
 }
 
-lsof_installed(){
-  type lsof > /dev/null 2> /dev/null
+lsof_instalado(){
+  type lsof > "/dev/null" 2> "/dev/null"
 }
 
 directorio_existe(){
   if [[ ! -d "$1" ]];then
-    error_system "No es un directorio válido."
+    error_exit "No existe el directorio $1."
   fi
 }
 
-# Procesamiento de parámetros posicionales.
+# Procesamiento de parámetros posicionales:
 
 while [[ -n "$1" ]]
 do
   case "$1" in 
     -d )
       shift
-      if [[ "$1" == "" || "$1" == -* ]];then 
-        error_system "Tienes que ingresar un directorio válido."
+      if [[ -z "$1" || "$1" == -* ]];then
+        error_exit "Tienes que ingresar la ruta de un directorio."
       fi
+      INGRESA_DIRECTORIO=1
       DIRECTORIO="$1"
     ;;
     * )
-      error_system "No es un argumento válido."
+      error_exit "No es un argumento válido."
     ;;
   esac
   shift
 done
 
+# Comprobación del estado del programa:
 
-# Comprobación del estado de ejecución.
-
-if ! lsof_installed; then
-  error_system "Debe estar instalado el programa lsof."
+if ! lsof_instalado;then
+  error_exit "No se encuentra instalada la aplicación lsof."
 fi
 
-directorio_existe "$DIRECTORIO"
+if [[ "$INGRESA_DIRECTORIO" -eq 1 ]];then
+  directorio_existe "$DIRECTORIO"
+fi
 
-# Lógica del programa.
-SORT="sort -k2,2nr"
+# Lógica del programa:
+SORT_CMD="sort -k2,2nr"
 
-PIDS=$(lsof +D"$DIRECTORIO"  2> /dev/null | awk 'NR>1 {print $2}' | sort -u )
-
-printf "$FORMATO" PID MEMORIA 
-echo
-for pid in $PIDS
-do 
-  printf "$FORMATO" "$pid" $(ps -p "$pid" --no-header -o %mem |awk '{print ($1 == "") ? "0.0%" : $1"%"}')
-  echo
-done | $SORT
+PIDS=$(lsof +D"$DIRECTORIO" 2> "/dev/null" | awk 'NR>1 {print $2}' | sort -u | tr '\n' ' ')
+printf "$FORMATO" PID MEMORIA
+for pid in  $PIDS
+do
+  printf "$FORMATO" "$pid" $(ps -p "$pid" --no-header -o %mem | awk '{suma += $1} END {print (suma) ? suma"%" : 0"%"}')
+done | $SORT_CMD
 
 exit 0

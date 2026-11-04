@@ -28,16 +28,12 @@ QUÉ HACE : Imprime los argumentos siguiendo la cadena de formato, que contiene
            texto literal, secuencias de escape y especificadores (%s, %d...).
 ESPECIFICADORES :
   %s   Cadena de texto.
-  %d   Entero decimal (%i es equivalente).
+  %d   Entero decimal .
   %f   Número decimal; %.2f fija 2 decimales.
-  %x   Hexadecimal (%X en mayúsculas); %o, octal.
-  %c   Un carácter.
-  %(fmt)T   Fecha y hora con formato strftime (bash 4.2+); -1 = ahora.
 ANCHO Y ALINEACIÓN :
   %5d     Ancho mínimo 5, alineado a la derecha.
   %-10s   Ancho mínimo 10, alineado a la izquierda.
   %05d    Rellena con ceros a la izquierda.
-  %.3s    Trunca la cadena a 3 caracteres.
 ESCAPES  : \n salto de línea, \t tabulador, \\ barra invertida, \" comillas,
            \r retorno de carro, \e carácter de escape (colores ANSI).
 EJEMPLOS :
@@ -63,7 +59,6 @@ QUÉ HACE : Muestra los archivos y directorios de las rutas indicadas (por
 OPCIONES :
   -l   Formato largo: permisos, enlaces, propietario, grupo, tamaño y fecha.
   -a   Incluye archivos ocultos (también . y ..).
-  -A   Incluye ocultos, pero sin . ni ..
   -h   Tamaños legibles (K, M, G); se usa junto a -l.
   -t   Ordena por fecha de modificación (más reciente primero).
   -S   Ordena por tamaño (mayor primero).
@@ -118,10 +113,6 @@ IFS= read -r -d '' 'FICHA[sort]' <<'EOF'
 SINTAXIS : sort [opciones] [archivo...]
 QUÉ HACE : Ordena las líneas de los archivos (o de la entrada estándar) y las
            escribe en la salida.
-DETALLE  : Por defecto ordena alfabéticamente según la configuración regional
-           (LC_ALL), por lo que "10" va antes que "2". Para un orden de bytes
-           predecible y más rápido: LC_ALL=C sort. Es imprescindible antes de
-           `uniq` y `comm`.
 OPCIONES :
   -n   Orden numérico.
   -h   Orden numérico "humano" (1K, 2M, 3G).
@@ -153,7 +144,6 @@ OPCIONES :
   -d C           Delimitador de campos.
   -f LISTA       Selecciona campos.
   --complement   Muestra todo excepto lo seleccionado.
-  -s             Ignora las líneas que no contienen el delimitador.
 EJEMPLOS :
   cut -d: -f1 /etc/passwd              # nombres de usuario
   cut -d, -f2,4 datos.csv
@@ -177,9 +167,7 @@ DETALLE  : Por defecto usa expresiones regulares básicas; con -E, extendidas
 OPCIONES :
   -i   Ignora mayúsculas y minúsculas.
   -v   Invierte: muestra las líneas que NO coinciden.
-  -n   Muestra el número de línea.
   -c   Cuenta las líneas que coinciden en lugar de mostrarlas.
-  -r, -R   Busca recursivamente en directorios.
   -w   Coincide con palabras completas.
   -x   Coincide con la línea entera.
   -o   Muestra solo la parte que coincide.
@@ -264,31 +252,6 @@ EJEMPLOS :
   wc -w ensayo.txt
 EOF
 
-# -----------------------------------------------------------------------------
-# sed
-# -----------------------------------------------------------------------------
-RESUMEN[sed]="Editor de flujo: buscar, reemplazar o borrar texto línea a línea."
-IFS= read -r -d '' 'FICHA[sed]' <<'EOF'
-SINTAXIS : sed [opciones] 'script' [archivo...]
-           comando | sed [opciones] 'script'
-QUÉ HACE : Lee el texto entrante, aplica comandos simples de transformación 
-           (como sustituir palabras o borrar líneas) y escupe el resultado. 
-           Por defecto no modifica el archivo original, solo la salida de texto.
-
-OPCIONES :
-  -i        Edita el archivo original directamente (in-place). ¡Peligroso, usar con cuidado!
-  -E        Activa las expresiones regulares extendidas (para usar +, ?, |).
-
-COMANDOS BÁSICOS DENTRO DE SED :
-  s/patrón/reemplazo/g   Sustituye 'patrón' por 'reemplazo'. 
-                         (La 'g' al final significa "global": cambia TODAS las 
-                         coincidencias en la línea, no solo la primera).
-  d                      Borra la línea. (Ej: '1d' borra la línea 1).
-
-EJEMPLOS : Sustituciones básicas
-  sed 's/rojo/azul/g' texto.txt              # Cambia "rojo" por "azul" en todo el texto
-  sed -i 's/localhost/127.0.0.1/g' conf.txt  # Modifica el archivo 'conf.txt' guardando los cambios.
-EOF
 
 # -----------------------------------------------------------------------------
 # ps
@@ -303,8 +266,6 @@ DETALLE  : Sin opciones solo muestra los procesos de la terminal actual.
            `grep [n]ginx` o usar `pgrep` lo evita.
 OPCIONES (estilo POSIX, con guion):
   -A / -e      Lista todos los procesos del sistema.
-  -j           Formato con información de la sesión y del grupo de procesos
-               (PID, PGID, SID, TTY...).
   -p PID       Muestra solo el proceso con ese identificador (PID).
   -u USUARIO   Muestra solo los procesos de ese usuario.
   -f           Formato completo (UID, PPID, comando con argumentos).
@@ -349,7 +310,6 @@ OPCIONES :
   -h   Tamaños legibles en potencias de 1024 (K, M, G).
   -H   Tamaños en potencias de 1000.
   -T   Muestra el tipo de sistema de archivos (ext4, xfs, tmpfs...).
-  -i   Muestra el uso de inodos en vez del de bloques.
   -a   Incluye sistemas de archivos "ficticios" (con tamaño 0).
   -t TIPO   Muestra solo ese tipo de sistema de archivos.
   -x TIPO   Excluye ese tipo (p. ej. -x tmpfs).
@@ -436,7 +396,6 @@ OPCIONES :
   -F SEP        Define el separador de campos de entrada (ej. -F: para /etc/passwd).
                 Por defecto considera cualquier secuencia de espacios o tabuladores.
   -v VAR=VAL    Pasa una variable de Bash a awk (disponible desde el bloque BEGIN).
-  -f ARCHIVO    Carga las instrucciones de awk desde un archivo externo.
 
 ESTRUCTURA DEL PROGRAMA :
   BEGIN { ... }    Se ejecuta UNA VEZ ANTES de leer cualquier línea (inicialización/cabeceras).
@@ -459,42 +418,6 @@ VARIABLES INTEGRADAS IMPRESCINDIBLES :
   NR           Número de línea global acumulado.
   FNR          Número de línea dentro del archivo actual.
   OFS          Separador de campos de salida (por defecto espacio; cambia al usar comas en print).
-
-EJEMPLOS : Selección de columnas y filtrado de cabeceras
-  awk 'NR > 1 {print $1, $2}' datos.txt        # Salta la cabecera e imprime col 1 y 2
-  awk -F: '{print $1, $3}' /etc/passwd         # Imprime usuario y UID desde /etc/passwd
-  awk '{print $NF}' salida_lsof.txt            # Muestra solo la última columna (rutas)
-  awk -v OFS='\t' '{print $1, $NF}' datos.txt  # Imprime columnas separadas por tabulador
-
-EJEMPLOS : Filtrado con condiciones
-  df -P | awk 'NR > 1 && $4 > 10000'           # Bloques disponibles > 10000 omitiendo cabecera
-  ps aux | awk '$3 > 50.0 {print $2, $11}'     # PID y comando con uso de CPU > 50%
-  lsof | awk -v reg="sh$" '$NF ~ reg'          # Procesa líneas cuya ruta ($NF) termine en 'sh'
-
-EJEMPLOS : Acumuladores y Cálculos
-  ps -u "$USER" -o rss | awk 'NR > 1 {s += $1} END {print s}'   # Suma total de memoria RSS
-  lsof -u "$USER" | awk 'NR > 1 {c++} END {print c+0}'          # Cuenta líneas omitiendo cabecera
-  awk '{s += $1} END {print (NR ? s/NR : 0)}' datos.txt         # Calcula la media sin división por 0
-
-EJEMPLOS : Agrupar con Arrays Asociativos (Diccionarios)
-  # Contar archivos abiertos por cada PID (agrupar por columna 2)
-  lsof | awk 'NR > 1 {count[$2]++} END {for (pid in count) print pid, count[pid]}'
-
-  # Sumar memoria consumida por cada usuario
-  ps aux | awk 'NR > 1 {mem[$1] += $6} END {for (u in mem) print u, mem[u]}'
-
-  # Sumar memoria por usuario y filtrar en END con for e if (>500MB)
-  ps aux | awk 'NR > 1 {mem[$1] += $6} END {for (usr in mem) {if (mem[usr] > 500000) print usr, mem[usr]}}'
-
-  # Eliminar líneas duplicadas sin desordenar el archivo
-  awk '!seen[$0]++' archivo.txt
-
-EJEMPLOS : Inyección de variables de Bash (-v)
-  FILTRO=".*sh$"
-  lsof | awk -v reg="$FILTRO" '$NF ~ reg {print $1, $NF}'
-
-  MIN_KB=5000
-  df -P | awk -v min="$MIN_KB" 'NR > 1 && $3 > min'
 EOF
 
 # -----------------------------------------------------------------------------
@@ -506,9 +429,6 @@ SINTAXIS : w [opciones] [usuario]
 QUÉ HACE : Lista los usuarios con sesión iniciada y el comando que ejecuta cada
            uno. La primera línea resume el sistema, igual que `uptime`: hora
            actual, tiempo encendido, número de usuarios y la carga media.
-OPCIONES :
-  -h   No muestra la cabecera.
-  -s   Formato corto: omite LOGIN@, JCPU y PCPU.
 EJEMPLOS :
   w
   w -h                  # sin la línea de cabecera
@@ -530,7 +450,6 @@ OPCIONES :
   -u   Solo el UID.
   -g   Solo el GID del grupo principal.
   -G   Los identificadores de todos los grupos.
-  -n   Muestra nombres en vez de números (con -u, -g o -G).
 EJEMPLOS :
   id
   id root
@@ -541,38 +460,6 @@ EJEMPLOS :
   id -nG ana | grep -qw docker && echo "ana está en docker"
 EOF
 
-
-# -----------------------------------------------------------------------------
-# du
-# -----------------------------------------------------------------------------
-RESUMEN[du]="Calcula el espacio en disco que ocupan archivos y directorios."
-IFS= read -r -d '' 'FICHA[du]' <<'EOF'
-SINTAXIS : du [opciones] [ruta...]
-QUÉ HACE : Recorre recursivamente los directorios indicados (por defecto, el
-           actual) y muestra cuánto espacio en disco ocupa cada uno.
-DETALLE  : Es el complemento de `df`: df informa del espacio de cada sistema de
-           archivos, mientras que du mide lo que ocupa un conjunto concreto de
-           archivos recorriéndolos. 
-OPCIONES :
-  -h          Tamaños legibles (K, M, G).
-  -s          Solo el total de cada argumento (resumen).
-  -a          Muestra también los archivos, no solo los directorios.
-  -c          Añade una línea final con el total general.
-  -d N        Profundidad máxima (--max-depth=N): du -h -d 1.
-  -k / -m     Tamaños en KiB / MiB.
-  -b          Tamaño aparente en bytes.
-  --apparent-size   Tamaño de los datos en lugar del espacio en disco.
-  --exclude=PATRÓN  Ignora los archivos que casen con el patrón.
-  -S          No incluye en cada directorio el tamaño de sus subdirectorios.
-  --time      Muestra la fecha de la última modificación.
-EJEMPLOS :
-  du -sh /var/log
-  du -h -d 1 /home | sort -rh              # qué subdirectorios ocupan más
-  du -ah . | sort -rh | head -10           # los 10 elementos más grandes
-  du -sh --exclude='*.log' proyecto/
-  du -shc *.iso                            # tamaño de cada ISO y el total
-  du -xh -d 1 / 2>/dev/null | sort -rh | head
-EOF
 
 # =============================================================================
 # Funciones de presentación
