@@ -141,6 +141,16 @@ bool write_data(int fd, const std::vector<uint8_t>& buffer) {
   return true;
 }
 
+std::expected<size_t,std::system_error> get_file_size(const std::string& file_path){
+  struct stat st;
+  if (stat(file_path.c_str(), &st) == -1) {
+    return system_error_from_errno(std::format("Error al acceder a los metadatos de '{}'", file_path));
+  }
+  
+  return static_cast<std::size_t>(st.st_size);
+}
+
+
 std::expected<void, std::system_error> copy_file(
     const std::string& src_path,
     const std::string& dest_path,
@@ -168,7 +178,18 @@ std::expected<void, std::system_error> copy_file(
   std::vector<uint8_t> buffer;
   std::expected<void, std::system_error> resultado = {};
 
+  auto size{get_file_size(src_path)};
+
+  if (!size.has_value()) {
+    return system_error_from_errno(std::format("Error al obtener el tamaño de '{}'", src_path));
+  }
+
+  size_t size_src{size.value()};
+  int iteracion{1};
+  
   while (true) {
+    std::cout << "Tamaño del archivo origen por copiar en la iteración " << iteracion << " : " << size_src << "\n";
+
     // Leemos hasta 128 KiB del origen.
     if (!read_data(fd_src, buffer)) {
       resultado = system_error_from_errno("error al leer el archivo de origen");
@@ -180,11 +201,15 @@ std::expected<void, std::system_error> copy_file(
       break;
     }
 
+    size_src -= buffer.size();
+
     // Escribimos en el destino los bytes exactos que se acaban de leer.
     if (!write_data(fd_dest, buffer)) {
       resultado = system_error_from_errno("error al escribir el archivo de destino");
       break;
     }
+
+    ++iteracion;
   }
 
   if (!resultado.has_value()) {
@@ -204,49 +229,7 @@ std::expected<void, std::system_error> copy_file(
     return system_error_from_errno("error al cerrar los archivos");
   }
 
-  struct stat st_register;
-  if (stat(dest_path.c_str(), &st_register) == -1) {
-    return system_error_from_errno(std::format("Error al acceder a los metadatos de '{}'", dest_path));
-  }
-  
-  std::size_t tamaño_fichero{static_cast<std::size_t>(st_register.st_size)};
-
-  return file_register(dest_path,tamaño_fichero);
+  return resultado;
 }
 
-std::expected<void, std::system_error> file_register(
-    const std::string& file_name,
-    std::size_t file_size,
-    const std::string& path = "/tmp/copy_logfile") {
 
-  int fd = open(path.c_str(), O_WRONLY | O_CREAT | O_APPEND, 0644);
-
-  if (fd == -1) {
-    return system_error_from_errno("Error al abrir el archivo para almacenar registros");
-  }
-
-  std::string name_file = std::filesystem::path{file_name}.filename().string();
-  std::string registro = std::format("Nombre del archivo: {}. Tamaño del archivo: {}\n",
-                                     name_file, file_size);
-
-  std::size_t total_written = 0;
-  while (total_written < registro.size()) {
-    ssize_t escrito = write(fd, registro.data() + total_written,
-                            registro.size() - total_written);
-    if (escrito == -1) {
-      if (errno == EINTR) {
-        continue;
-      }
-      auto error = system_error_from_errno("Error en la escritura del archivo");
-      close(fd);
-      return error;
-    }
-    total_written += static_cast<std::size_t>(escrito);
-  }
-
-  if (close(fd) == -1) {
-    return system_error_from_errno("Error al cerrar el archivo");
-  }
-
-  return {};
-}

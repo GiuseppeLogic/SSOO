@@ -134,4 +134,12 @@ std::expected<void, std::system_error> copy_file(
     const std::string& dest_path,
     mode_t dst_perms = 0644);
 
+/**
+ * @brief Obtiene el tamaño de un archivo.
+ * 
+ * @param file_path 
+ * @return std::expected<size_t,std::system_error> 
+ */
+std::expected<size_t,std::system_error> get_file_size(const std::string& file_path);
+
 #endif
