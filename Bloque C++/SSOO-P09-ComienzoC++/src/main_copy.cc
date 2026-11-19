@@ -17,52 +17,49 @@
  * y mostrando los posibles errores del sistema.
  */
 
-
 #include "copy.h"
 
+
+int protected_main(int argc, char* argv[]) {
+  // 1. Validar argumentos
+  if (!check_args(argc, argv)) {
+    return EXIT_FAILURE;
+  }
+
+  std::string ruta_origen{argv[1]};
+  std::string ruta_destino{argv[2]};
+
+  // 2. Ajustar la ruta si el destino es un directorio
+  if (is_directory(ruta_destino)) {
+    std::filesystem::path destino{ruta_destino};
+    destino /= std::filesystem::path{ruta_origen}.filename();
+    ruta_destino = destino.string();
+  }
+
+  // 3. Comprobar identidad de los archivos para evitar auto-sobrescritura
+  if (is_same_file(ruta_origen, ruta_destino)) {
+    std::cerr << std::format("{}: ORIGEN y DESTINO son el mismo archivo\n", argv[0]);
+    return EXIT_FAILURE;
+  }
+
+  // 4. Ejecutar la copia real
+  auto copy_res = copy_file(ruta_origen, ruta_destino);
+  if (!copy_res.has_value()) {
+    std::cerr << std::format("{}: {}\n", argv[0], copy_res.error().what());
+    return EXIT_FAILURE;
+  }
+
+  return EXIT_SUCCESS;
+}
+
 int main(int argc, char* argv[]) {
-    // 1. Validar argumentos
-    auto arg_check = check_arg(argc, argv);
-    if (!arg_check.has_value()) {
-        std::system_error error = arg_check.error(); 
-        std::cerr << std::format("Código de Error ({}): {}\n", error.code().value(), error.what());
-        return EXIT_FAILURE; 
-    }
-
-    // 2. Comprobar si el destino es un directorio
-    auto dir_check = is_directory(std::string{argv[2]});
-    if (!dir_check.has_value()) {
-        std::system_error error = dir_check.error(); 
-        std::cerr << std::format("Código de Error ({}): {}\n", error.code().value(), error.what());
-        return EXIT_FAILURE; 
-    }
-
-    std::string ruta_origen{argv[1]};
-    std::string ruta_destino{argv[2]};
-
-    // 3. Ajustar la ruta si el destino es un directorio
-    if (dir_check.value()) {
-        std::filesystem::path origen{argv[1]};
-        std::filesystem::path destino{argv[2]};
-        destino /= origen.filename(); 
-        ruta_destino = destino.string();
-    }
-    
-    // 4. Comprobar identidad de los archivos para evitar auto-sobrescritura
-    auto same_check = is_same_file(ruta_origen, ruta_destino);
-    if (!same_check.has_value()) {
-        std::system_error error = same_check.error(); 
-        std::cerr << std::format("Código de Error ({}): {}\n", error.code().value(), error.what());
-        return EXIT_FAILURE; 
-    }
-
-    // 5. Ejecutar la copia real
-    auto copy_res = copy_file(ruta_origen, ruta_destino,0644);
-    if (!copy_res.has_value()) {
-        std::system_error error = copy_res.error(); 
-        std::cerr << std::format("Código de Error ({}): {}\n", error.code().value(), error.what());
-        return EXIT_FAILURE;
-    }
-
-    return EXIT_SUCCESS;
+  try {
+    return protected_main(argc, argv);
+  } catch (const std::system_error& e) {
+    std::cerr << std::format("{}: error inesperado ({}): {}\n",
+                             argv[0], e.code().value(), e.what());
+  } catch (const std::exception& e) {
+    std::cerr << std::format("{}: error inesperado: {}\n", argv[0], e.what());
+  }
+  return EXIT_FAILURE;
 }
